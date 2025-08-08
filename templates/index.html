@@ -1,0 +1,50 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>DL-5S Builder (One Page)</title>
+    <style>
+      body { font-family: Arial, margin: 2rem; padding: 2rem; }
+      label { display:block; margin-top:0.5rem; }
+      .container { max-width: 900px; margin: auto; }
+      .panel { border: 1px solid #ddd; padding: 1rem; margin-top: 1rem; border-radius: 6px; background:#fafafa; }
+      pre { background:#f3f3f3; padding:0.5rem; }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>DL-5S Builder (One Page)</h1>
+      <form method="post">
+        {% for category, opts in domains.items() %}
+          <label>{{ category }}:
+            <select name="{{ category }}">
+              {% for o in opts %}
+                <option value="{{ o }}">{{ o }}</option>
+              {% endfor %}
+            </select>
+          </label>
+        {% endfor %}
+        <button type="submit">Generate & Index</button>
+      </form>
+
+      {% if built_key %}
+        <div class="panel">
+          <h3>Library built (key={{ built_key }})</h3>
+          <p>Selections: {{ selections }}</p>
+          <form action="/search/{{ built_key }}" method="post">
+            <input type="text" name="q" placeholder="Enter search query" style="width:60%" value="{{ query if query else '' }}">
+            <button type="submit">Search</button>
+          </form>
+          {% if results is not none %}
+            <h4>Results</h4>
+            <ol>
+            {% for doc, score in results %}
+              <li><pre>{{ doc }}</pre><small>score={{ '%.4f'|format(score) if score is not none else 'n/a' }}</small></li>
+            {% endfor %}
+            </ol>
+          {% endif %}
+        </div>
+      {% endif %}
+    </div>
+  </body>
+</html>
